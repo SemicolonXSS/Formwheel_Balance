@@ -1,0 +1,1654 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fc">
+<title>FormWheel Balance</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#f7f8fc;
+  color:#171923;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid #e8e9ef;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-.8px;
+  text-decoration:none;
+  color:#151720;
+}
+
+.logoWheel{
+  width:30px;
+  height:30px;
+  border:5px solid #171923;
+  border-radius:50%;
+  position:relative;
+}
+
+.logoWheel:before,
+.logoWheel:after{
+  content:"";
+  position:absolute;
+  background:#171923;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+
+.logoWheel:before{
+  width:19px;
+  height:4px;
+}
+
+.logoWheel:after{
+  width:4px;
+  height:19px;
+}
+
+.headerRight{
+  color:#70737d;
+  font-size:14px;
+  font-weight:700;
+}
+
+.wrap{
+  width:min(1100px,calc(100% - 30px));
+  margin:0 auto;
+  padding:35px 0 60px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:42px;
+  letter-spacing:-2px;
+}
+
+.hero p{
+  margin:9px 0 0;
+  color:#747782;
+  font-size:15px;
+}
+
+.card{
+  background:white;
+  border:1px solid #e6e7ec;
+  border-radius:22px;
+  box-shadow:0 12px 35px rgba(20,25,40,.06);
+}
+
+.setup{
+  max-width:650px;
+  margin:0 auto;
+  padding:28px;
+}
+
+.sectionTitle{
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:15px;
+}
+
+input{
+  width:100%;
+  height:50px;
+  border:1px solid #dfe1e8;
+  border-radius:13px;
+  padding:0 15px;
+  outline:none;
+  background:#fafbfc;
+}
+
+input:focus{
+  border-color:#171923;
+  background:white;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+
+.btn{
+  border:0;
+  border-radius:13px;
+  min-height:48px;
+  padding:0 18px;
+  font-weight:850;
+  transition:.15s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btnPrimary{
+  background:#171923;
+  color:white;
+  flex:1;
+}
+
+.btnLight{
+  background:#f0f1f5;
+  color:#252733;
+}
+
+.btnDanger{
+  background:#fff0f0;
+  color:#c62828;
+}
+
+.roomInfo{
+  display:none;
+  margin-top:18px;
+  padding:17px;
+  border-radius:15px;
+  background:#f6f7fa;
+}
+
+.roomCode{
+  font-size:30px;
+  font-weight:950;
+  letter-spacing:5px;
+  margin:4px 0;
+}
+
+.players{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.playerBox{
+  min-height:90px;
+  padding:13px;
+  border-radius:15px;
+  background:#f7f8fa;
+  border:1px solid #e8e9ee;
+}
+
+.playerBox.host{
+  border-color:#171923;
+}
+
+.playerName{
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.playerStatus{
+  margin-top:7px;
+  font-size:12px;
+  color:#81848e;
+}
+
+.game{
+  display:none;
+}
+
+.topStats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.stat{
+  padding:20px;
+}
+
+.statLabel{
+  color:#858894;
+  font-size:13px;
+  font-weight:800;
+}
+
+.statValue{
+  margin-top:5px;
+  font-size:28px;
+  font-weight:950;
+}
+
+.roundText{
+  text-align:center;
+  margin:18px 0;
+  font-weight:900;
+  color:#737681;
+}
+
+.myCard{
+  padding:22px;
+  margin-bottom:15px;
+}
+
+.myHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.myName{
+  font-size:21px;
+  font-weight:950;
+}
+
+.score{
+  font-size:26px;
+  font-weight:950;
+}
+
+.riskLabel{
+  display:flex;
+  justify-content:space-between;
+  margin-top:18px;
+  font-size:13px;
+  font-weight:850;
+}
+
+.riskBar{
+  height:16px;
+  margin-top:8px;
+  border-radius:99px;
+  background:#eceef2;
+  overflow:hidden;
+}
+
+.riskFill{
+  height:100%;
+  width:0%;
+  background:#171923;
+  border-radius:99px;
+  transition:.35s;
+}
+
+.riskNumbers{
+  display:flex;
+  justify-content:space-between;
+  margin-top:6px;
+  color:#858893;
+  font-size:12px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.action{
+  min-height:110px;
+  border:1px solid #e1e3e8;
+  border-radius:17px;
+  background:white;
+  padding:12px 7px;
+  font-weight:850;
+  transition:.15s;
+}
+
+.action:hover{
+  border-color:#171923;
+  transform:translateY(-2px);
+}
+
+.action.selected{
+  background:#171923;
+  color:white;
+  border-color:#171923;
+}
+
+.actionIcon{
+  display:block;
+  font-size:28px;
+  margin-bottom:8px;
+}
+
+.actionSmall{
+  display:block;
+  margin-top:5px;
+  font-size:10px;
+  opacity:.6;
+  font-weight:700;
+}
+
+.waiting{
+  text-align:center;
+  margin-top:16px;
+  color:#7c7f89;
+  font-size:13px;
+  font-weight:750;
+}
+
+.allPlayers{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.otherCard{
+  padding:17px;
+}
+
+.otherTop{
+  display:flex;
+  justify-content:space-between;
+}
+
+.otherScore{
+  font-weight:950;
+}
+
+.miniRisk{
+  height:9px;
+  background:#eceef2;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:11px;
+}
+
+.miniRisk div{
+  height:100%;
+  background:#171923;
+  border-radius:99px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(15,17,25,.42);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modalBox{
+  width:min(520px,100%);
+  background:white;
+  border-radius:24px;
+  padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.2);
+  text-align:center;
+}
+
+.eventIcon{
+  font-size:50px;
+}
+
+.eventTitle{
+  margin-top:8px;
+  font-size:26px;
+  font-weight:950;
+}
+
+.eventText{
+  margin-top:10px;
+  line-height:1.65;
+  color:#656873;
+}
+
+.resultList{
+  margin:20px 0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.resultRow{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 16px;
+  background:#f5f6f8;
+  border-radius:12px;
+  font-weight:850;
+}
+
+.note{
+  margin-top:15px;
+  color:#8a8d96;
+  font-size:12px;
+  line-height:1.6;
+}
+
+@media(max-width:760px){
+  .header{
+    padding:0 15px;
+  }
+
+  .hero h1{
+    font-size:34px;
+  }
+
+  .players{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .actions{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .actions .action:last-child{
+    grid-column:span 2;
+  }
+
+  .topStats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .allPlayers{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <a class="logo" href="https://semicolonxss.github.io/Formwheel/">
+    <span class="logoWheel"></span>
+    <span>FormWheel</span>
+  </a>
+
+  <div class="headerRight">⚖️ Balance</div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>⚖️ Balance</h1>
+    <p>욕심과 안전 사이에서 균형을 잡아라.</p>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup" class="card setup">
+
+    <div class="sectionTitle">게임 시작</div>
+
+    <input
+      id="nickname"
+      maxlength="12"
+      placeholder="닉네임을 입력하세요 (최대 12자)"
+    >
+
+    <div class="row">
+      <button class="btn btnPrimary" id="createBtn">
+        방 만들기
+      </button>
+
+      <button class="btn btnLight" id="joinBtn">
+        방 참가
+      </button>
+    </div>
+
+    <div id="joinArea" style="display:none;margin-top:12px">
+      <input id="roomInput" maxlength="4" placeholder="4자리 방 코드">
+      <button
+        class="btn btnPrimary"
+        id="joinConfirm"
+        style="width:100%;margin-top:10px"
+      >
+        참가하기
+      </button>
+    </div>
+
+    <div id="roomInfo" class="roomInfo">
+      <div style="font-size:12px;color:#858893;font-weight:800">
+        ROOM CODE
+      </div>
+
+      <div id="roomCode" class="roomCode">----</div>
+
+      <button
+        class="btn btnLight"
+        id="copyBtn"
+        style="width:100%"
+      >
+        방 코드 복사
+      </button>
+
+      <div class="players" id="players"></div>
+
+      <button
+        class="btn btnPrimary"
+        id="startBtn"
+        style="width:100%;margin-top:15px;display:none"
+      >
+        게임 시작
+      </button>
+
+      <div class="note">
+        최소 2명부터 시작할 수 있습니다.<br>
+        호스트만 게임을 시작할 수 있습니다.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="game">
+
+    <div class="topStats">
+      <div class="card stat">
+        <div class="statLabel">현재 라운드</div>
+        <div class="statValue" id="roundDisplay">1 / 10</div>
+      </div>
+
+      <div class="card stat">
+        <div class="statLabel">내 점수</div>
+        <div class="statValue" id="myScore">0</div>
+      </div>
+    </div>
+
+    <div class="roundText" id="roundStatus">
+      행동을 선택하세요
+    </div>
+
+    <div class="card myCard">
+
+      <div class="myHead">
+        <div class="myName" id="myName">Player</div>
+        <div class="score" id="bigScore">0</div>
+      </div>
+
+      <div class="riskLabel">
+        <span>⚠️ 위험도</span>
+        <span id="riskText">0 / 100</span>
+      </div>
+
+      <div class="riskBar">
+        <div id="riskFill" class="riskFill"></div>
+      </div>
+
+      <div class="riskNumbers">
+        <span>안전</span>
+        <span>불안정</span>
+        <span>위험</span>
+      </div>
+
+      <div class="actions">
+
+        <button class="action" data-action="attack">
+          <span class="actionIcon">⚔️</span>
+          공격
+          <span class="actionSmall">상대에게 피해</span>
+        </button>
+
+        <button class="action" data-action="defend">
+          <span class="actionIcon">🛡️</span>
+          방어
+          <span class="actionSmall">위험도 감소</span>
+        </button>
+
+        <button class="action" data-action="greed">
+          <span class="actionIcon">💰</span>
+          점수 획득
+          <span class="actionSmall">큰 점수 / 큰 위험</span>
+        </button>
+
+        <button class="action" data-action="swap">
+          <span class="actionIcon">🔄</span>
+          교환
+          <span class="actionSmall">상대와 점수 교환</span>
+        </button>
+
+        <button class="action" data-action="random">
+          <span class="actionIcon">🎲</span>
+          랜덤
+          <span class="actionSmall">예측 불가능</span>
+        </button>
+
+      </div>
+
+      <div class="waiting" id="waiting">
+        행동을 선택하면 기다립니다.
+      </div>
+
+    </div>
+
+    <div class="allPlayers" id="allPlayers"></div>
+
+  </section>
+
+</main>
+
+
+<!-- EVENT MODAL -->
+<div class="modal" id="eventModal">
+  <div class="modalBox">
+
+    <div class="eventIcon" id="eventIcon">⚡</div>
+
+    <div class="eventTitle" id="eventTitle">
+      균형 붕괴!
+    </div>
+
+    <div class="eventText" id="eventText">
+      특별한 사건이 발생했습니다.
+    </div>
+
+    <button
+      class="btn btnPrimary"
+      id="eventClose"
+      style="width:100%;margin-top:20px"
+    >
+      확인
+    </button>
+
+  </div>
+</div>
+
+
+<!-- RESULT MODAL -->
+<div class="modal" id="resultModal">
+  <div class="modalBox">
+
+    <div class="eventIcon">🏆</div>
+
+    <div class="eventTitle">
+      Balance 종료
+    </div>
+
+    <div class="eventText">
+      최종 결과
+    </div>
+
+    <div class="resultList" id="resultList"></div>
+
+    <button
+      class="btn btnPrimary"
+      id="backHome"
+      style="width:100%"
+    >
+      메인으로
+    </button>
+
+  </div>
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+/* =========================
+   FIREBASE
+========================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBreTSe1m0-xlbF4aupnU5isRZCihR25IE",
+  authDomain: "formwheel.firebaseapp.com",
+  databaseURL: "https://formwheel-default-rtdb.firebaseio.com",
+  projectId: "formwheel",
+  storageBucket: "formwheel.firebasestorage.app",
+  messagingSenderId: "431583088241",
+  appId: "1:431583088241:web:74e0e34ea1e3e1170c55d0",
+  measurementId: "G-T372YXDF8D"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+/* =========================
+   CONSTANTS
+========================= */
+
+const MAX_PLAYERS = 4;
+const MAX_ROUNDS = 10;
+
+const ACTIONS = {
+  attack:"attack",
+  defend:"defend",
+  greed:"greed",
+  swap:"swap",
+  random:"random"
+};
+
+
+/* =========================
+   STATE
+========================= */
+
+let roomId = "";
+let playerId = "";
+let isHost = false;
+
+let selectedAction = null;
+let localState = null;
+
+const nicknameEl = document.getElementById("nickname");
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function randomId(){
+  return Math.random().toString(36).slice(2,10);
+}
+
+function roomCode(){
+  return String(Math.floor(1000 + Math.random()*9000));
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function playerRef(){
+  return ref(db,`balance/${roomId}/players/${playerId}`);
+}
+
+function gameRef(){
+  return ref(db,`balance/${roomId}`);
+}
+
+function getPlayers(state){
+  return Object.values(state.players || {});
+}
+
+function show(el){
+  el.style.display="";
+}
+
+function hide(el){
+  el.style.display="none";
+}
+
+
+/* =========================
+   SETUP
+========================= */
+
+document.getElementById("createBtn").onclick = async ()=>{
+
+  const name = nicknameEl.value.trim();
+
+  if(!name){
+    alert("닉네임을 입력해주세요.");
+    return;
+  }
+
+  playerId = randomId();
+  roomId = roomCode();
+  isHost = true;
+
+  const data = {
+
+    meta:{
+      host:playerId,
+      started:false,
+      round:0,
+      maxRounds:MAX_ROUNDS
+    },
+
+    players:{
+      [playerId]:{
+        id:playerId,
+        name:name.slice(0,12),
+        score:0,
+        risk:0,
+        action:null,
+        ready:false
+      }
+    }
+
+  };
+
+  await set(gameRef(),data);
+
+  enterLobby();
+  listenRoom();
+};
+
+
+document.getElementById("joinBtn").onclick = ()=>{
+  const area = document.getElementById("joinArea");
+
+  area.style.display =
+    area.style.display === "none"
+    ? "block"
+    : "none";
+};
+
+
+document.getElementById("joinConfirm").onclick = async ()=>{
+
+  const name = nicknameEl.value.trim();
+  const code = document.getElementById("roomInput").value.trim();
+
+  if(!name){
+    alert("닉네임을 입력해주세요.");
+    return;
+  }
+
+  if(!/^\d{4}$/.test(code)){
+    alert("4자리 방 코드를 입력해주세요.");
+    return;
+  }
+
+  roomId = code;
+
+  const snap = await get(ref(db,`balance/${roomId}`));
+
+  if(!snap.exists()){
+    alert("존재하지 않는 방입니다.");
+    return;
+  }
+
+  const state = snap.val();
+  const players = getPlayers(state);
+
+  if(players.length >= MAX_PLAYERS){
+    alert("방이 가득 찼습니다.");
+    return;
+  }
+
+  if(state.meta.started){
+    alert("이미 시작된 게임입니다.");
+    return;
+  }
+
+  playerId = randomId();
+  isHost = false;
+
+  await set(
+    ref(db,`balance/${roomId}/players/${playerId}`),
+    {
+      id:playerId,
+      name:name.slice(0,12),
+      score:0,
+      risk:0,
+      action:null,
+      ready:false
+    }
+  );
+
+  enterLobby();
+  listenRoom();
+};
+
+
+function enterLobby(){
+
+  hide(document.getElementById("setup"));
+  show(document.getElementById("roomInfo"));
+
+  document.getElementById("roomCode").textContent = roomId;
+
+  if(isHost){
+    show(document.getElementById("startBtn"));
+  }
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+document.getElementById("copyBtn").onclick = async ()=>{
+
+  try{
+    await navigator.clipboard.writeText(roomId);
+    document.getElementById("copyBtn").textContent="복사 완료!";
+    setTimeout(()=>{
+      document.getElementById("copyBtn").textContent="방 코드 복사";
+    },1200);
+  }catch{
+    alert("방 코드: "+roomId);
+  }
+
+};
+
+
+/* =========================
+   ROOM LISTENER
+========================= */
+
+function listenRoom(){
+
+  onValue(gameRef(),snap=>{
+
+    if(!snap.exists()){
+      return;
+    }
+
+    const state = snap.val();
+
+    localState = state;
+
+    renderLobby(state);
+
+    if(state.meta?.started){
+      hide(document.getElementById("setup"));
+      show(document.getElementById("game"));
+      renderGame(state);
+    }
+
+  });
+
+}
+
+
+/* =========================
+   LOBBY
+========================= */
+
+function renderLobby(state){
+
+  const container = document.getElementById("players");
+
+  container.innerHTML="";
+
+  const players = getPlayers(state);
+
+  for(let i=0;i<MAX_PLAYERS;i++){
+
+    const p = players[i];
+
+    const box = document.createElement("div");
+    box.className="playerBox";
+
+    if(p && p.id===state.meta.host){
+      box.classList.add("host");
+    }
+
+    if(p){
+
+      box.innerHTML=`
+        <div class="playerName">
+          ${escapeHtml(p.name)}
+        </div>
+        <div class="playerStatus">
+          ${p.id===state.meta.host ? "👑 호스트" : "플레이어"}
+        </div>
+      `;
+
+    }else{
+
+      box.innerHTML=`
+        <div class="playerName">빈 자리</div>
+        <div class="playerStatus">대기 중</div>
+      `;
+
+    }
+
+    container.appendChild(box);
+  }
+
+  const start = document.getElementById("startBtn");
+
+  if(isHost){
+    start.style.display="block";
+    start.disabled = players.length < 2;
+    start.textContent =
+      players.length < 2
+      ? `플레이어 대기 중 (${players.length}/2)`
+      : `게임 시작 (${players.length}명)`;
+  }
+
+}
+
+
+/* =========================
+   START GAME
+========================= */
+
+document.getElementById("startBtn").onclick = async ()=>{
+
+  if(!isHost) return;
+
+  const snap = await get(gameRef());
+
+  if(!snap.exists()) return;
+
+  const state = snap.val();
+  const players = getPlayers(state);
+
+  if(players.length < 2){
+    alert("최소 2명이 필요합니다.");
+    return;
+  }
+
+  const updates = {
+    "meta/started":true,
+    "meta/round":1
+  };
+
+  for(const p of players){
+
+    updates[`players/${p.id}/score`] = 0;
+    updates[`players/${p.id}/risk`] = 0;
+    updates[`players/${p.id}/action`] = null;
+    updates[`players/${p.id}/ready`] = false;
+
+  }
+
+  await update(gameRef(),updates);
+
+};
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+document.querySelectorAll(".action").forEach(btn=>{
+
+  btn.onclick = async ()=>{
+
+    if(!localState?.meta?.started){
+      return;
+    }
+
+    if(selectedAction){
+      return;
+    }
+
+    selectedAction = btn.dataset.action;
+
+    document.querySelectorAll(".action")
+      .forEach(x=>x.classList.remove("selected"));
+
+    btn.classList.add("selected");
+
+    document.getElementById("waiting").textContent =
+      "선택 완료! 다른 플레이어를 기다리는 중...";
+
+    await update(playerRef(),{
+      action:selectedAction,
+      ready:true
+    });
+
+    checkRoundReady();
+
+  };
+
+});
+
+
+/* =========================
+   CHECK ROUND
+========================= */
+
+async function checkRoundReady(){
+
+  const snap = await get(gameRef());
+
+  if(!snap.exists()) return;
+
+  const state = snap.val();
+
+  const players = getPlayers(state);
+
+  if(players.length < 2) return;
+
+  const ready = players.filter(p=>p.ready);
+
+  if(ready.length !== players.length){
+    return;
+  }
+
+  if(state.meta.host !== playerId){
+    return;
+  }
+
+  resolveRound(state);
+
+}
+
+
+/* =========================
+   ROUND LOGIC
+========================= */
+
+async function resolveRound(state){
+
+  const players = getPlayers(state);
+
+  const results = {};
+
+  players.forEach(p=>{
+    results[p.id]={
+      score:p.score || 0,
+      risk:p.risk || 0,
+      action:p.action
+    };
+  });
+
+
+  /* -------------------------
+     ACTIONS
+  ------------------------- */
+
+  for(const p of players){
+
+    const action = p.action;
+
+    if(action==="defend"){
+
+      results[p.id].risk =
+        Math.max(0,results[p.id].risk - 12);
+
+      results[p.id].score += 2;
+
+    }
+
+    if(action==="greed"){
+
+      results[p.id].score += 30;
+      results[p.id].risk += 10;
+
+    }
+
+    if(action==="attack"){
+
+      results[p.id].score += 5;
+      results[p.id].risk += 1;
+
+    }
+
+    if(action==="random"){
+
+      const roll = Math.floor(Math.random()*100);
+
+      if(roll < 25){
+
+        results[p.id].score += 35;
+        results[p.id].risk += 15;
+
+      }else if(roll < 50){
+
+        results[p.id].score += 10;
+        results[p.id].risk += 5;
+
+      }else if(roll < 75){
+
+        results[p.id].score -= 15;
+        results[p.id].risk += 8;
+
+      }else{
+
+        results[p.id].score += 5;
+        results[p.id].risk -= 10;
+
+      }
+
+    }
+
+  }
+
+
+  /* -------------------------
+     ATTACK
+  ------------------------- */
+
+  const attackers =
+    players.filter(p=>p.action==="attack");
+
+  for(const attacker of attackers){
+
+    const others =
+      players.filter(p=>p.id!==attacker.id);
+
+    if(!others.length) continue;
+
+    const target =
+      others[Math.floor(Math.random()*others.length)];
+
+    results[target.id].score -= 8;
+    results[target.id].risk += 4;
+
+  }
+
+
+  /* -------------------------
+     SWAP
+  ------------------------- */
+
+  const swappers =
+    players.filter(p=>p.action==="swap");
+
+  for(const p of swappers){
+
+    const others =
+      players.filter(x=>x.id!==p.id);
+
+    if(!others.length) continue;
+
+    const target =
+      others[Math.floor(Math.random()*others.length)];
+
+    const tempScore = results[p.id].score;
+
+    results[p.id].score =
+      results[target.id].score;
+
+    results[target.id].score =
+      tempScore;
+
+  }
+
+
+  /* -------------------------
+     NATURAL RISK
+  ------------------------- */
+
+  for(const p of players){
+
+    results[p.id].risk =
+      Math.max(
+        0,
+        Math.min(100,results[p.id].risk)
+      );
+
+  }
+
+
+  /* -------------------------
+     SPECIAL EVENTS
+  ------------------------- */
+
+  const events=[];
+
+  for(const p of players){
+
+    if(results[p.id].risk >= 100){
+
+      const event =
+        Math.floor(Math.random()*5);
+
+      if(event===0){
+
+        results[p.id].score += 50;
+
+        events.push({
+          icon:"💎",
+          title:"대박!",
+          text:`${p.name}의 위험이 폭발하며 +50점을 얻었습니다!`
+        });
+
+      }
+
+      else if(event===1){
+
+        results[p.id].score -= 40;
+
+        events.push({
+          icon:"💥",
+          title:"균형 붕괴!",
+          text:`${p.name}의 욕심이 너무 커져 -40점을 잃었습니다.`
+        });
+
+      }
+
+      else if(event===2){
+
+        results[p.id].score *= -1;
+
+        events.push({
+          icon:"🔄",
+          title:"점수 반전!",
+          text:`${p.name}의 점수가 반전되었습니다.`
+        });
+
+      }
+
+      else if(event===3){
+
+        results[p.id].score += 20;
+
+        for(const q of players){
+
+          if(q.id!==p.id){
+            results[q.id].score -= 10;
+          }
+
+        }
+
+        events.push({
+          icon:"⚡",
+          title:"폭주!",
+          text:`${p.name}이 폭주했습니다! 본인 +20 / 다른 플레이어 -10`
+        });
+
+      }
+
+      else{
+
+        results[p.id].score = 0;
+
+        events.push({
+          icon:"🌀",
+          title:"초기화!",
+          text:`${p.name}의 점수가 0으로 초기화되었습니다.`
+        });
+
+      }
+
+      results[p.id].risk = 35;
+
+    }
+
+  }
+
+
+  /* -------------------------
+     APPLY
+  ------------------------- */
+
+  const updates={};
+
+  for(const p of players){
+
+    updates[`players/${p.id}/score`] =
+      Math.round(results[p.id].score);
+
+    updates[`players/${p.id}/risk`] =
+      Math.round(results[p.id].risk);
+
+    updates[`players/${p.id}/action`] = null;
+    updates[`players/${p.id}/ready`] = false;
+
+  }
+
+
+  const round = state.meta.round;
+
+  if(round >= MAX_ROUNDS){
+
+    updates["meta/finished"]=true;
+
+  }else{
+
+    updates["meta/round"]=round+1;
+
+  }
+
+
+  await update(gameRef(),updates);
+
+  selectedAction=null;
+
+  document.querySelectorAll(".action")
+    .forEach(x=>x.classList.remove("selected"));
+
+  document.getElementById("waiting").textContent =
+    "다음 라운드의 행동을 선택하세요.";
+
+  if(events.length){
+    showEvent(events[0]);
+  }
+
+}
+
+
+/* =========================
+   GAME RENDER
+========================= */
+
+function renderGame(state){
+
+  const players = getPlayers(state);
+
+  const me = state.players[playerId];
+
+  if(!me) return;
+
+  const round =
+    state.meta.finished
+    ? MAX_ROUNDS
+    : state.meta.round;
+
+  document.getElementById("roundDisplay").textContent =
+    `${round} / ${MAX_ROUNDS}`;
+
+  document.getElementById("myName").textContent =
+    me.name;
+
+  document.getElementById("myScore").textContent =
+    me.score;
+
+  document.getElementById("bigScore").textContent =
+    me.score;
+
+  const risk =
+    Math.max(0,Math.min(100,me.risk || 0));
+
+  document.getElementById("riskText").textContent =
+    `${risk} / 100`;
+
+  document.getElementById("riskFill").style.width =
+    `${risk}%`;
+
+
+  if(me.ready){
+
+    document.getElementById("waiting").textContent =
+      "선택 완료! 다른 플레이어를 기다리는 중...";
+
+  }else{
+
+    document.getElementById("waiting").textContent =
+      "행동을 선택하세요.";
+
+  }
+
+
+  renderPlayers(players,me.id);
+
+
+  if(state.meta.finished){
+
+    showResult(players);
+
+  }
+
+}
+
+
+/* =========================
+   PLAYER LIST
+========================= */
+
+function renderPlayers(players,myId){
+
+  const box =
+    document.getElementById("allPlayers");
+
+  box.innerHTML="";
+
+  players
+    .sort((a,b)=>(b.score||0)-(a.score||0))
+    .forEach(p=>{
+
+      if(p.id===myId) return;
+
+      const risk =
+        Math.max(0,Math.min(100,p.risk||0));
+
+      const card =
+        document.createElement("div");
+
+      card.className="card otherCard";
+
+      card.innerHTML=`
+
+        <div class="otherTop">
+
+          <div>
+            <div style="font-size:12px;color:#858893">
+              ${p.ready ? "✅ 선택 완료" : "⏳ 선택 중"}
+            </div>
+
+            <div style="font-weight:900;margin-top:3px">
+              ${escapeHtml(p.name)}
+            </div>
+          </div>
+
+          <div class="otherScore">
+            ${p.score}
+          </div>
+
+        </div>
+
+        <div class="miniRisk">
+          <div style="width:${risk}%"></div>
+        </div>
+
+        <div style="
+          margin-top:6px;
+          color:#858893;
+          font-size:11px;
+          text-align:right;
+        ">
+          위험도 ${risk}
+        </div>
+
+      `;
+
+      box.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================
+   EVENT
+========================= */
+
+function showEvent(event){
+
+  document.getElementById("eventIcon").textContent =
+    event.icon;
+
+  document.getElementById("eventTitle").textContent =
+    event.title;
+
+  document.getElementById("eventText").textContent =
+    event.text;
+
+  document.getElementById("eventModal").style.display =
+    "flex";
+
+}
+
+document.getElementById("eventClose").onclick = ()=>{
+  hide(document.getElementById("eventModal"));
+};
+
+
+/* =========================
+   RESULT
+========================= */
+
+function showResult(players){
+
+  const list =
+    document.getElementById("resultList");
+
+  list.innerHTML="";
+
+  const sorted =
+    [...players]
+      .sort((a,b)=>(b.score||0)-(a.score||0));
+
+  sorted.forEach((p,index)=>{
+
+    const row =
+      document.createElement("div");
+
+    row.className="resultRow";
+
+    row.innerHTML=`
+      <span>
+        ${index===0 ? "🏆 " : ""}
+        ${escapeHtml(p.name)}
+      </span>
+
+      <span>${p.score}점</span>
+    `;
+
+    list.appendChild(row);
+
+  });
+
+  document.getElementById("resultModal").style.display =
+    "flex";
+
+}
+
+
+/* =========================
+   BACK HOME
+========================= */
+
+document.getElementById("backHome").onclick = ()=>{
+  location.href="https://semicolonxss.github.io/Formwheel/";
+};
+
+</script>
+
+</body>
+</html>
