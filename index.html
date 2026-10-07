@@ -720,6 +720,8 @@ import {
   set,
   update,
   onValue,
+  runTransaction,
+  onDisconnect,
   get
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -965,9 +967,11 @@ document.getElementById("copyBtn").onclick = async ()=>{
    ROOM LISTENER
 ========================= */
 
+let balanceUnsubscribe=null;
 function listenRoom(){
-
-  onValue(gameRef(),snap=>{
+  if(balanceUnsubscribe)balanceUnsubscribe();
+  onDisconnect(playerRef()).remove().catch(()=>{});
+  balanceUnsubscribe=onValue(gameRef(),snap=>{
 
     if(!snap.exists()){
       return;
@@ -975,7 +979,18 @@ function listenRoom(){
 
     const state = snap.val();
 
+    const previousRound=localState?.meta?.round;
     localState = state;
+    if(!state.players?.[state.meta.host] || (state.meta.started && getPlayers(state).length<2 && !state.meta.finished)){
+      runTransaction(gameRef(),current=>{
+        if(!current)return;const ids=Object.keys(current.players||{});let changed=false;
+        if(!current.players?.[current.meta.host]){current.meta.host=ids[0]||"";changed=true;}
+        if(current.meta.started&&ids.length<2&&!current.meta.finished){current.meta.finished=true;changed=true;}
+        return changed?current:undefined;
+      },{applyLocally:false}).catch(()=>{});
+    }
+    if(previousRound!==state.meta.round){selectedAction=null;document.querySelectorAll(".action").forEach(x=>x.classList.remove("selected"));}
+    if(state.meta.started&&!state.meta.finished&&getPlayers(state).every(p=>p.ready)&&state.meta.host===playerId)resolveRound(state);
 
     renderLobby(state);
 
@@ -1162,7 +1177,7 @@ async function checkRoundReady(){
    ROUND LOGIC
 ========================= */
 
-async function resolveRound(state){
+function calculateBalanceRound(state, random=Math.random){
 
   const players = getPlayers(state);
 
@@ -1210,7 +1225,7 @@ async function resolveRound(state){
 
     if(action==="random"){
 
-      const roll = Math.floor(Math.random()*100);
+      const roll = Math.floor(random()*100);
 
       if(roll < 25){
 
@@ -1254,7 +1269,7 @@ async function resolveRound(state){
     if(!others.length) continue;
 
     const target =
-      others[Math.floor(Math.random()*others.length)];
+      others[Math.floor(random()*others.length)];
 
     results[target.id].score -= 8;
     results[target.id].risk += 4;
@@ -1277,7 +1292,7 @@ async function resolveRound(state){
     if(!others.length) continue;
 
     const target =
-      others[Math.floor(Math.random()*others.length)];
+      others[Math.floor(random()*others.length)];
 
     const tempScore = results[p.id].score;
 
@@ -1316,7 +1331,7 @@ async function resolveRound(state){
     if(results[p.id].risk >= 100){
 
       const event =
-        Math.floor(Math.random()*5);
+        Math.floor(random()*5);
 
       if(event===0){
 
@@ -1426,7 +1441,24 @@ async function resolveRound(state){
   }
 
 
-  await update(gameRef(),updates);
+  return {updates,events};
+}
+
+async function resolveRound(expected){
+ const seed=Math.floor(Math.random()*4294967296);
+ let events=[];
+ const result=await runTransaction(gameRef(),state=>{
+   if(!state||state.meta?.host!==playerId||!state.meta.started||state.meta.finished||state.meta.round!==expected.meta.round)return;
+   const players=getPlayers(state);if(players.length<2||!players.every(p=>p.ready))return;
+   let randomState=seed;
+   const random=()=>{randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296};
+   const computed=calculateBalanceRound(state,random);events=computed.events;
+   for(const [path,value] of Object.entries(computed.updates)){
+     const parts=path.split('/');let target=state;for(const k of parts.slice(0,-1))target=target[k]||(target[k]={});target[parts.at(-1)]=value;
+   }
+   state.meta.lastEvents=events;state.meta.lastResolvedRound=expected.meta.round;return state;
+ },{applyLocally:false});
+ if(!result.committed)return;
 
   selectedAction=null;
 
@@ -1652,3 +1684,4 @@ document.getElementById("backHome").onclick = ()=>{
 
 </body>
 </html>
+
