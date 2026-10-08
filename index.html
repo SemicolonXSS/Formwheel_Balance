@@ -812,7 +812,7 @@ function getPlayers(state){
 }
 
 function show(el){
-  el.style.display="";
+  el.style.display="block";
 }
 
 function hide(el){
@@ -935,7 +935,10 @@ document.getElementById("joinConfirm").onclick = async ()=>{
 
 function enterLobby(){
 
-  hide(document.getElementById("setup"));
+  show(document.getElementById("setup"));
+  hide(nicknameEl);
+  hide(document.getElementById("createBtn").parentElement);
+  hide(document.getElementById("joinArea"));
   show(document.getElementById("roomInfo"));
 
   document.getElementById("roomCode").textContent = roomId;
@@ -1055,6 +1058,8 @@ function renderLobby(state){
 
   const start = document.getElementById("startBtn");
 
+  isHost = state.meta.host === playerId;
+  start.style.display = isHost ? "block" : "none";
   if(isHost){
     start.style.display="block";
     start.disabled = players.length < 2;
