@@ -68,11 +68,11 @@ const nicknameEl = document.getElementById("nickname");
 ========================= */
 
 function randomId(){
-  return Math.random().toString(36).slice(2,10);
+  return crypto.randomUUID().replace(/-/g,"").slice(0,8);
 }
 
 function roomCode(){
-  return String(Math.floor(1000 + Math.random()*9000));
+  return String(1000 + crypto.getRandomValues(new Uint32Array(1))[0] % 9000);
 }
 
 function escapeHtml(str){
