@@ -241,6 +241,21 @@
 <script type="module" src="./assets/app.js?v=20261020-random3"></script>
 
 <script type="module" src="https://semicolonxss.github.io/Formwheel/assets/live-presence.js?v=20261017-duration"></script>
+<script>
+/* Secol Random 8: independent conveniences */
+document.addEventListener("DOMContentLoaded",()=>{
+ const $=id=>document.getElementById(id),name=$("nickname"),key="fw_balance_recent_name_v1";
+ try{if(name&&!name.value)name.value=localStorage.getItem(key)||""}catch{}
+ name?.addEventListener("change",()=>{try{localStorage.setItem(key,name.value.trim().slice(0,12))}catch{}});
+ const tips=document.createElement("details");tips.style.cssText="margin:12px 0;padding:12px;border:1px solid #ccc;border-radius:12px";tips.innerHTML='<summary style="cursor:pointer;font-weight:700">🎯 행동별 전략 힌트</summary><p>방어: 위험도를 낮추기 좋아요 · 탐욕: 점수 획득을 노릴 때 · 공격: 다른 플레이어 견제 · 교환: 판세 변화 · 랜덤: 예상치 못한 결과에 도전!</p>';
+ const actions=document.querySelector('[data-action="attack"]')?.parentElement;if(actions)actions.parentElement.insertBefore(tips,actions);
+ const copy=document.createElement("button");copy.className="btn btnLight";copy.type="button";copy.textContent="📋 최종 결과 복사";copy.style.cssText="width:100%;margin-top:10px";
+ copy.onclick=async()=>{const result=$("resultList")?.innerText.trim();if(!result)return;try{await navigator.clipboard.writeText("🎯 Formwheel Balance 결과\n"+result);copy.textContent="✅ 복사 완료"}catch{copy.textContent="복사가 차단됐어요."}};
+ $("resultList")?.insertAdjacentElement("afterend",copy);
+ const shortcut=document.createElement("p");shortcut.style.cssText="font-size:12px;color:#666;margin:8px 0";shortcut.textContent="⌨️ 팁: 게임 중 숫자 1~5로 행동을 빠르게 선택할 수 있어요.";if(actions)actions.insertAdjacentElement("afterend",shortcut);
+ document.addEventListener("keydown",e=>{if(e.altKey||e.ctrlKey||e.metaKey||e.isComposing||e.target?.matches("input,textarea,select,button"))return;const i=Number(e.key);if(i<1||i>5||!Number.isInteger(i))return;const game=$("game");if(!game||getComputedStyle(game).display==="none")return;const btn=document.querySelectorAll("[data-action]")[i-1];if(btn&&!btn.disabled){e.preventDefault();btn.click();}});
+});
+</script>
 </body>
 </html>
 
